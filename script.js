@@ -1,7 +1,6 @@
-// Replace with your real sheet ID and range
 const SHEET_ID = "1vnnOZZYSWdJ8nF8my3z_qXI1GBxwn2lZwtk4CdzaiGo";
-const SHEET_RANGE = "entries";
-const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${SHEET_RANGE}`;
+const GID = "1982402548";
+const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${GID}`;
 
 let rawData = [];
 
