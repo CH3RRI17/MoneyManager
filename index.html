@@ -5,19 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Money Manager</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .filter-select {
+      @apply bg-white border border-gray-300 rounded-lg px-4 py-2 shadow-sm text-sm text-gray-700 w-full;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 text-gray-900">
   <div class="max-w-6xl mx-auto px-4 py-8">
     <h1 class="text-3xl font-bold text-center mb-8">💰 Money Manager</h1>
+
+    <!-- Filters -->
+    <div id="filters" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <select id="filter-type" class="filter-select"></select>
+      <select id="filter-account" class="filter-select"></select>
+      <select id="filter-currency" class="filter-select"></select>
+      <select id="filter-category" class="filter-select"></select>
+    </div>
 
     <!-- Totals -->
     <div id="totals" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8"></div>
 
     <!-- Table -->
     <div class="bg-white shadow rounded-lg p-4 overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200" id="entries-table">
-        <!-- Content added by script.js -->
-      </table>
+      <table class="min-w-full divide-y divide-gray-200" id="entries-table"></table>
     </div>
   </div>
 
