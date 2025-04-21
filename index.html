@@ -1,37 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Money Manager v23.24</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MoneyManager</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    .filter-select {
-      @apply bg-white border border-gray-300 rounded-lg px-4 py-2 shadow-sm text-sm text-gray-700 w-full;
-    }
-  </style>
+  <!-- Font Awesome for icons -->
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
 </head>
-<body class="bg-gray-100 text-gray-900">
-  <div class="max-w-6xl mx-auto px-4 py-8">
-    <h1 class="text-3xl font-bold text-center mb-8">💰 Money Manager</h1>
+<body class="bg-gray-100">
 
-    <!-- Filters -->
-    <div id="filters" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-      <select id="filter-type" class="filter-select"></select>
-      <select id="filter-account" class="filter-select"></select>
-      <select id="filter-currency" class="filter-select"></select>
-      <select id="filter-category" class="filter-select"></select>
-    </div>
+  <!-- Header -->
+  <header class="bg-blue-600 p-4 text-white text-center font-bold text-xl">
+    MoneyManager
+  </header>
 
-    <!-- Totals -->
-    <div id="totals" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8"></div>
-
-    <!-- Table -->
-    <div class="bg-white shadow rounded-lg p-4 overflow-x-auto">
-      <table class="min-w-full divide-y divide-gray-200" id="entries-table"></table>
-    </div>
+  <!-- Tab Navigation -->
+  <div class="flex justify-around bg-white shadow-md p-4">
+    <button class="tab-btn active-tab" onclick="openTab('dashboard')">
+      <i class="fas fa-tachometer-alt"></i> Dashboard
+    </button>
+    <button class="tab-btn" onclick="openTab('accounts')">
+      <i class="fas fa-university"></i> Accounts
+    </button>
+    <button class="tab-btn" onclick="openTab('record')">
+      <i class="fas fa-file-invoice-dollar"></i> Record
+    </button>
   </div>
 
-  <script src="script.js"></script>
+  <!-- Tab Content -->
+  <div id="dashboard" class="tab-content p-6 hidden">
+    <h2 class="text-2xl font-semibold mb-4">Dashboard</h2>
+    <!-- Add content for the dashboard here -->
+  </div>
+
+  <div id="accounts" class="tab-content p-6 hidden">
+    <h2 class="text-2xl font-semibold mb-4">Accounts</h2>
+    <!-- Add content for the accounts here -->
+  </div>
+
+  <div id="record" class="tab-content p-6 hidden">
+    <h2 class="text-2xl font-semibold mb-4">Record</h2>
+    <!-- Add content for recording transactions here -->
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-blue-600 p-4 text-white text-center">
+    © 2025 MoneyManager. All rights reserved.
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Function to switch between tabs
+    function openTab(tabName) {
+      const tabs = document.querySelectorAll('.tab-content');
+      const buttons = document.querySelectorAll('.tab-btn');
+      
+      // Hide all tab content
+      tabs.forEach(tab => tab.classList.add('hidden'));
+      
+      // Remove active class from all buttons
+      buttons.forEach(button => button.classList.remove('bg-blue-600', 'text-white'));
+      
+      // Show the clicked tab content
+      document.getElementById(tabName).classList.remove('hidden');
+      
+      // Add active class to the clicked button
+      const activeButton = Array.from(buttons).find(button => button.textContent.trim().toLowerCase() === tabName);
+      activeButton.classList.add('bg-blue-600', 'text-white');
+    }
+
+    // Initialize the first tab as active
+    openTab('dashboard');
+  </script>
+
 </body>
 </html>
