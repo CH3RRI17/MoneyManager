@@ -1,126 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Money Manager</title>
-  <style>
-    body { font-family: sans-serif; margin: 0; padding-bottom: 60px; }
-    nav { position: fixed; bottom: 0; left: 0; right: 0; display: flex; background: #333; color: #fff; }
-    nav button { flex: 1; padding: 1em; border: none; background: #444; color: white; cursor: pointer; }
-    .page { display: none; padding: 1em; }
-    .active { display: block; }
-    input, select, button { display: block; margin: 10px 0; width: 100%; padding: 8px; }
-  </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-
-  <!-- Dashboard Page -->
-  <div id="dashboard" class="page active">
-    <h2>Dashboard</h2>
-    <div id="dashboardContent">Coming soon: stats & reports.</div>
+  <div class="container">
+    <h1>💰 Money Manager</h1>
+    <div id="totals" class="card-container"></div>
+    <div id="entries-table" class="table-container"></div>
   </div>
-
-  <!-- Accounts Page -->
-  <div id="accounts" class="page">
-    <h2>Accounts</h2>
-    <div id="accountList">Loading accounts...</div>
-    <input type="text" id="newAccount" placeholder="New Account Name (e.g., ADCB)">
-    <button onclick="createAccount()">Create Account</button>
-  </div>
-
-  <!-- Record Transaction Page -->
-  <div id="record" class="page">
-    <h2>Record Transaction</h2>
-    <form onsubmit="recordTransaction(event)">
-      <input type="date" id="date" required>
-      <select id="type">
-        <option value="Inflow">Inflow</option>
-        <option value="Outflow">Outflow</option>
-      </select>
-      <input type="number" id="amount" placeholder="Amount" required>
-      <input type="text" id="account" placeholder="Account Name (e.g., ENBD)" required>
-      <input type="text" id="category" placeholder="Category">
-      <input type="text" id="description" placeholder="Description">
-      <input type="text" id="tag" placeholder="Tag">
-      <input type="date" id="futureDate" placeholder="Future Date (optional)">
-      <button type="submit">Save Transaction</button>
-    </form>
-  </div>
-
-  <!-- Bottom Nav -->
-  <nav>
-    <button onclick="showPage('dashboard')">Dashboard</button>
-    <button onclick="showPage('accounts')">Accounts</button>
-    <button onclick="showPage('record')">Record</button>
-  </nav>
-
-  <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx0oYca9Sp_ECczIxPK0UG7kl-5hSLYBToGmB_GhocWhQNRxOGK1M83wJUeu9LmGQ5GcA/exec';
-
-    function showPage(id) {
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      if (id === 'accounts') loadAccounts();
-    }
-
-    function createAccount() {
-      const accountName = document.getElementById('newAccount').value.trim();
-      if (!accountName) return alert("Enter a valid account name");
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: "createAccount", accountName })
-      })
-        .then(res => res.text())
-        .then(msg => {
-          alert(msg);
-          loadAccounts();
-          document.getElementById('newAccount').value = '';
-        });
-    }
-
-    function loadAccounts() {
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify({ action: "getAccounts" })
-      })
-        .then(res => res.json())
-        .then(accounts => {
-          const list = document.getElementById('accountList');
-          list.innerHTML = '';
-          accounts.forEach(acc => {
-            const div = document.createElement('div');
-            div.innerText = acc;
-            list.appendChild(div);
-          });
-        });
-    }
-
-    function recordTransaction(e) {
-      e.preventDefault();
-      const data = {
-        action: "recordTransaction",
-        date: document.getElementById('date').value,
-        type: document.getElementById('type').value,
-        amount: document.getElementById('amount').value,
-        account: document.getElementById('account').value,
-        category: document.getElementById('category').value,
-        description: document.getElementById('description').value,
-        tag: document.getElementById('tag').value,
-        futureDate: document.getElementById('futureDate').value
-      };
-
-      fetch(API_URL, {
-        method: 'POST',
-        body: JSON.stringify(data)
-      })
-        .then(res => res.text())
-        .then(msg => {
-          alert(msg);
-          document.querySelector('#record form').reset();
-        });
-    }
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
