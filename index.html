@@ -4,14 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Money Manager</title>
-  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-  <div class="container">
-    <h1>💰 Money Manager</h1>
-    <div id="totals" class="card-container"></div>
-    <div id="entries-table" class="table-container"></div>
+<body class="bg-gray-100 text-gray-900">
+  <div class="max-w-6xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-center mb-8">💰 Money Manager</h1>
+
+    <!-- Totals -->
+    <div id="totals" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-8"></div>
+
+    <!-- Table -->
+    <div class="bg-white shadow rounded-lg p-4 overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200" id="entries-table">
+        <!-- Content added by script.js -->
+      </table>
+    </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
