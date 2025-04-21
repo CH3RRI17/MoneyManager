@@ -1,6 +1,6 @@
-// app.js
+// Add new account
 document.getElementById("addAccountBtn").addEventListener("click", () => {
-  const name = prompt("Account name?");
+  const name = prompt("Enter account name:");
   if (name) {
     const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
     accounts.push({ id: Date.now(), name, balance: 0 });
@@ -9,18 +9,20 @@ document.getElementById("addAccountBtn").addEventListener("click", () => {
   }
 });
 
+// Render all accounts
 function renderAccounts() {
   const accounts = JSON.parse(localStorage.getItem("accounts") || "[]");
   const container = document.getElementById("accountList");
   container.innerHTML = "";
-  accounts.forEach((acc) => {
+  accounts.forEach(acc => {
     const div = document.createElement("div");
-    div.className = "p-2 border rounded flex justify-between items-center";
+    div.className = "p-2 bg-darkaccent rounded flex justify-between items-center";
     div.innerHTML = `<span>${acc.name}</span><span>$${acc.balance.toFixed(2)}</span>`;
     container.appendChild(div);
   });
 }
 
+// Backup data
 document.getElementById("backupBtn").addEventListener("click", () => {
   const data = {
     accounts: JSON.parse(localStorage.getItem("accounts") || "[]"),
@@ -34,6 +36,20 @@ document.getElementById("backupBtn").addEventListener("click", () => {
   a.click();
 });
 
+// Tab switching
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const target = btn.dataset.tab;
+
+    document.querySelectorAll('.tab-section').forEach(sec => sec.classList.add('hidden'));
+    document.getElementById(`tab-${target}`).classList.remove('hidden');
+
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('text-white'));
+    btn.classList.add('text-white');
+  });
+});
+
+// Init
 window.onload = () => {
   renderAccounts();
 };
