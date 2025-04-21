@@ -1,7 +1,9 @@
-// Replace with your sheet ID
+// Replace with your real sheet ID and range
 const SHEET_ID = "1vnnOZZYSWdJ8nF8my3z_qXI1GBxwn2lZwtk4CdzaiGo";
 const SHEET_RANGE = "entries";
 const SHEET_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?sheet=${SHEET_RANGE}`;
+
+let rawData = [];
 
 async function fetchData() {
   const res = await fetch(SHEET_URL);
@@ -9,7 +11,7 @@ async function fetchData() {
   const json = JSON.parse(text.substr(47).slice(0, -2));
   const rows = json.table.rows;
 
-  const data = rows.map(r => ({
+  rawData = rows.map(r => ({
     date: r.c[0]?.v || '',
     type: r.c[1]?.v || '',
     account: r.c[2]?.v || '',
@@ -19,8 +21,43 @@ async function fetchData() {
     notes: r.c[6]?.v || '',
   }));
 
-  renderTotals(data);
-  renderTable(data);
+  renderFilters(rawData);
+  applyFilters(); // initial render
+}
+
+function renderFilters(data) {
+  const uniqueValues = (key) => [...new Set(data.map(d => d[key]).filter(Boolean))];
+
+  const renderSelect = (id, values, label) => {
+    const select = document.getElementById(id);
+    select.innerHTML = `<option value="">All ${label}</option>` +
+      values.map(v => `<option value="${v}">${v}</option>`).join('');
+    select.addEventListener('change', applyFilters);
+  };
+
+  renderSelect("filter-type", uniqueValues("type"), "Types");
+  renderSelect("filter-account", uniqueValues("account"), "Accounts");
+  renderSelect("filter-currency", uniqueValues("currency"), "Currencies");
+  renderSelect("filter-category", uniqueValues("category"), "Categories");
+}
+
+function applyFilters() {
+  const filters = {
+    type: document.getElementById("filter-type").value,
+    account: document.getElementById("filter-account").value,
+    currency: document.getElementById("filter-currency").value,
+    category: document.getElementById("filter-category").value,
+  };
+
+  const filtered = rawData.filter(entry =>
+    (!filters.type || entry.type === filters.type) &&
+    (!filters.account || entry.account === filters.account) &&
+    (!filters.currency || entry.currency === filters.currency) &&
+    (!filters.category || entry.category === filters.category)
+  );
+
+  renderTotals(filtered);
+  renderTable(filtered);
 }
 
 function renderTotals(data) {
