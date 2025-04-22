@@ -1,277 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Record</title>
+  <title>Record Transaction v23.34</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       background-color: #222;
       color: #f1f1f1;
     }
+
     input, select, textarea {
       background-color: #2a2a2a;
       border: 1px solid #444;
       color: #f1f1f1;
     }
+
     .tab-active {
-      border-bottom: 3px solid;
-      font-weight: bold;
+      border-bottom-width: 2px;
     }
+
     .suggestion-box {
       background-color: #2a2a2a;
       border: 1px solid #444;
-      position: absolute;
-      z-index: 50;
-      width: 100%;
       max-height: 150px;
       overflow-y: auto;
+      z-index: 10;
     }
-    .suggestion-box div {
+
+    .suggestion-item {
       padding: 0.5rem;
       cursor: pointer;
     }
-    .suggestion-box div:hover {
+
+    .suggestion-item:hover {
       background-color: #333;
     }
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-  <form class="w-full max-w-xl bg-[#1c1c1c] p-6 rounded-xl shadow-lg space-y-5 relative" onsubmit="return validateForm()">
-    <h2 class="text-2xl font-bold mb-4">Record Transaction</h2>
-
+  <div class="w-full max-w-xl space-y-6 bg-[#1c1c1c] p-6 rounded-xl shadow-lg relative">
     <!-- Tabs -->
-    <div class="flex justify-between mb-4 text-center text-sm font-medium">
-      <button type="button" class="w-full py-2 tab tab-expense border-[#ff4444]" onclick="setTab('expense')">Expense</button>
-      <button type="button" class="w-full py-2 tab tab-income border-green-400" onclick="setTab('income')">Income</button>
-      <button type="button" class="w-full py-2 tab tab-transfer border-blue-400" onclick="setTab('transfer')">Transfer</button>
+    <div class="flex space-x-4 border-b border-gray-600 mb-4">
+      <button id="expenseTab" class="pb-2 text-white tab-active border-[#ff4444]">Expense</button>
+      <button id="incomeTab" class="pb-2 text-white border-green-500">Income</button>
+      <button id="transferTab" class="pb-2 text-white border-blue-500">Transfer</button>
     </div>
 
-    <!-- Common: Date -->
-    <div id="date-group">
-      <label class="block mb-1">Date</label>
-      <input type="date" id="date" class="w-full p-2 rounded" required />
-      <div class="mt-2">
-        <button type="button" class="text-[#ff4444]" onclick="showRepeatOptions()">Repeat</button>
-        <p id="repeatSummary" class="text-sm text-gray-300 mt-1 hidden"></p>
+    <!-- FORM Start -->
+    <form id="recordForm" class="space-y-4 relative">
+      <!-- Date -->
+      <div>
+        <label for="date" class="block mb-1">Date</label>
+        <input type="date" id="date" name="date" class="w-full p-2 rounded" required />
       </div>
-    </div>
 
-    <!-- Repeat Options Popup -->
-    <div id="repeatPopup" class="fixed inset-0 bg-black bg-opacity-60 flex items-end justify-center z-50 hidden">
-      <div class="bg-[#1c1c1c] w-full max-w-md p-4 rounded-t-lg space-y-4">
-        <h3 class="text-lg font-bold">Repeat Options</h3>
-        <button class="w-full bg-[#444] py-2 rounded" onclick="showInstallmentPrompt()">Installment</button>
-        <button class="w-full bg-[#444] py-2 rounded" onclick="showRepeatChoices()">Repeat</button>
-        <button class="w-full bg-[#333] text-red-400 py-2 rounded" onclick="closeRepeatPopup()">Cancel</button>
+      <!-- Repeat Display / Button / Config -->
+      <div id="repeatContainer"></div>
+
+      <!-- Account -->
+      <div id="accountField">
+        <label class="block mb-1">Account</label>
+        <select class="w-full p-2 rounded" required>
+          <option disabled selected>Select Account</option>
+          <option>Mashreq</option>
+          <option>ENBD</option>
+          <option>Cash Wallet</option>
+        </select>
       </div>
-    </div>
 
-    <!-- Installment prompt -->
-    <div id="installmentPrompt" class="hidden space-y-2">
-      <label for="installments">No. of Monthly Installments</label>
-      <input type="number" id="installments" min="1" class="w-full p-2 rounded" />
-      <div class="flex gap-2">
-        <button type="button" class="w-full bg-[#ff4444] text-white py-2 rounded" onclick="saveInstallments()">Save</button>
-        <button type="button" class="w-full bg-[#333] py-2 rounded" onclick="closeRepeatPopup()">Cancel</button>
+      <!-- Amount -->
+      <div>
+        <label for="amount" class="block mb-1">Amount</label>
+        <input type="number" id="amount" class="w-full p-2 rounded" required />
       </div>
-    </div>
 
-    <!-- Repeat options list -->
-    <div id="repeatOptions" class="hidden space-y-2">
-      <label class="block">Repeat Frequency</label>
-      <select id="repeatFreq" class="w-full p-2 rounded">
-        <option>Every Day</option>
-        <option>Weekdays</option>
-        <option>Weekends</option>
-        <option>Every Week</option>
-        <option>Every Month</option>
-      </select>
-      <div class="flex gap-2">
-        <button type="button" class="w-full bg-[#ff4444] text-white py-2 rounded" onclick="saveRepeat()">Save</button>
-        <button type="button" class="w-full bg-[#333] py-2 rounded" onclick="closeRepeatPopup()">Cancel</button>
+      <!-- Category (dropdown changes by tab, hidden for Transfer) -->
+      <div id="categoryField">
+        <label for="category" class="block mb-1">Category</label>
+        <select id="category" class="w-full p-2 rounded" required>
+          <option disabled selected>Select Category</option>
+        </select>
       </div>
-    </div>
 
-    <!-- Dynamic Content -->
-    <div id="formContent"></div>
+      <!-- Paid to / Received from (hidden for Transfer) -->
+      <div id="personField" class="relative">
+        <label id="personLabel" for="person" class="block mb-1">Paid to</label>
+        <input type="text" id="person" class="w-full p-2 rounded" autocomplete="off" required />
+        <div id="suggestions" class="suggestion-box absolute w-full hidden rounded mt-1"></div>
+      </div>
 
-    <!-- Buttons -->
-    <div class="flex justify-between gap-4 pt-4">
-      <button type="submit" class="w-full bg-[#ff4444] text-white py-2 rounded hover:bg-red-600">Save</button>
-      <button type="reset" class="w-full border border-[#ff4444] text-[#ff4444] py-2 rounded hover:bg-red-900/20">Reset</button>
-    </div>
-  </form>
+      <!-- Transfer fields -->
+      <div id="transferFields" class="hidden space-y-4">
+        <div>
+          <label for="from" class="block mb-1">From</label>
+          <select id="from" class="w-full p-2 rounded" required>
+            <option disabled selected>Select Account</option>
+            <option>Mashreq</option>
+            <option>ENBD</option>
+            <option>Cash Wallet</option>
+          </select>
+        </div>
+        <div>
+          <label for="to" class="block mb-1">To</label>
+          <select id="to" class="w-full p-2 rounded" required>
+            <option disabled selected>Select Account</option>
+            <option>Mashreq</option>
+            <option>ENBD</option>
+            <option>Cash Wallet</option>
+          </select>
+        </div>
+      </div>
 
+      <!-- Description (moved in Transfer) -->
+      <div id="descriptionField">
+        <label for="description" class="block mb-1">Description</label>
+        <textarea id="description" rows="2" class="w-full p-2 rounded"></textarea>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex gap-4 pt-4">
+        <button type="submit" class="bg-[#ff4444] text-white py-2 px-4 rounded">Save</button>
+        <button type="reset" class="bg-gray-600 text-white py-2 px-4 rounded" onclick="resetRepeat()">Reset</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Scripts -->
   <script>
-    const tabButtons = {
-      expense: document.querySelector('.tab-expense'),
-      income: document.querySelector('.tab-income'),
-      transfer: document.querySelector('.tab-transfer')
-    };
-    const formContent = document.getElementById('formContent');
-    const repeatPopup = document.getElementById('repeatPopup');
-    const installmentPrompt = document.getElementById('installmentPrompt');
-    const repeatOptions = document.getElementById('repeatOptions');
-    const repeatSummary = document.getElementById('repeatSummary');
-    let activeTab = 'expense';
-
-    const categories = {
-      income: ['Salary', 'Freelance', 'Bonus', 'Interest', 'Gift', 'Rental Income'],
-      expense: ['Groceries', 'Utilities', 'Rent', 'Dining', 'Transport', 'Entertainment', 'Travel', 'Shopping', 'Healthcare', 'Education', 'Donations', 'Subscriptions', 'Insurance', 'Maintenance', 'Government & Legal Fees', 'Visa & Immigration', 'Document Attestation', 'Fines & Penalties', 'Legal Services']
+    const tabs = {
+      expense: document.getElementById('expenseTab'),
+      income: document.getElementById('incomeTab'),
+      transfer: document.getElementById('transferTab')
     };
 
-    function setTab(tab) {
-      activeTab = tab;
-      Object.keys(tabButtons).forEach(t => {
-        tabButtons[t].classList.remove('tab-active');
+    const form = document.getElementById('recordForm');
+    const accountField = document.getElementById('accountField');
+    const categoryField = document.getElementById('categoryField');
+    const personField = document.getElementById('personField');
+    const personLabel = document.getElementById('personLabel');
+    const transferFields = document.getElementById('transferFields');
+    const descriptionField = document.getElementById('descriptionField');
+    const categorySelect = document.getElementById('category');
+
+    const expenseCategories = [
+      'Food & Dining', 'Shopping', 'Transport', 'Housing', 'Utilities',
+      'Healthcare', 'Entertainment', 'Education', 'Travel', 'Groceries',
+      'Visa & Immigration', 'Document Attestation', 'Fines & Penalties', 'Legal Services'
+    ];
+    const incomeCategories = [
+      'Salary', 'Freelance', 'Investment', 'Bonus', 'Reimbursement', 'Gift'
+    ];
+
+    const setCategoryOptions = (type) => {
+      categorySelect.innerHTML = `<option disabled selected>Select Category</option>`;
+      const categories = type === 'income' ? incomeCategories : expenseCategories;
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        categorySelect.appendChild(option);
       });
-      tabButtons[tab].classList.add('tab-active');
-      updateForm();
-    }
+    };
 
-    function updateForm() {
-      repeatSummary.textContent = '';
-      repeatSummary.classList.add('hidden');
-      let html = '';
+    const setTab = (type) => {
+      Object.keys(tabs).forEach(key => tabs[key].classList.remove("tab-active"));
+      tabs[type].classList.add("tab-active");
 
-      if (activeTab === 'expense' || activeTab === 'income') {
-        html += `
-        <div>
-          <label class="block mb-1">Account</label>
-          <select class="w-full p-2 rounded" required>
-            <option value="">Select Account</option>
-            <option>Mashreq</option>
-            <option>ENBD</option>
-            <option>Cash Wallet</option>
-          </select>
-        </div>
+      const isTransfer = type === 'transfer';
+      accountField.classList.toggle("hidden", isTransfer);
+      categoryField.classList.toggle("hidden", isTransfer);
+      personField.classList.toggle("hidden", isTransfer);
+      transferFields.classList.toggle("hidden", !isTransfer);
 
-        <div>
-          <label class="block mb-1">Amount</label>
-          <input type="number" class="w-full p-2 rounded" required />
-        </div>
-
-        <div>
-          <label class="block mb-1">Category</label>
-          <select class="w-full p-2 rounded" required>
-            ${categories[activeTab].map(cat => `<option>${cat}</option>`).join('')}
-          </select>
-        </div>
-
-        <div class="relative">
-          <label class="block mb-1">${activeTab === 'expense' ? 'Paid To' : 'Received From'}</label>
-          <input type="text" class="w-full p-2 rounded" id="payeeInput" oninput="showSuggestions(this)" autocomplete="off" required />
-          <div id="suggestions" class="suggestion-box hidden"></div>
-        </div>
-        `;
-      } else if (activeTab === 'transfer') {
-        html += `
-        <div>
-          <label class="block mb-1">Amount</label>
-          <input type="number" class="w-full p-2 rounded" required />
-        </div>
-        <div>
-          <label class="block mb-1">From</label>
-          <select class="w-full p-2 rounded" required>
-            <option value="">Select Account</option>
-            <option>Mashreq</option>
-            <option>ENBD</option>
-            <option>Cash Wallet</option>
-          </select>
-        </div>
-        <div>
-          <label class="block mb-1">To</label>
-          <select class="w-full p-2 rounded" required>
-            <option value="">Select Account</option>
-            <option>Mashreq</option>
-            <option>ENBD</option>
-            <option>Cash Wallet</option>
-          </select>
-        </div>
-        <div>
-          <label class="block mb-1">Note</label>
-          <input type="text" class="w-full p-2 rounded" required />
-        </div>
-        <div>
-          <label class="block mb-1">Description (optional)</label>
-          <textarea class="w-full p-2 rounded"></textarea>
-        </div>
-        `;
+      // Move description after To in transfer
+      const parent = document.getElementById('recordForm');
+      if (isTransfer) {
+        transferFields.insertAdjacentElement('afterend', descriptionField);
+      } else {
+        form.insertBefore(descriptionField, form.lastElementChild);
       }
 
-      formContent.innerHTML = html;
-    }
+      personLabel.innerText = type === 'income' ? 'Received from' : 'Paid to';
+      setCategoryOptions(type);
+    };
 
-    function showRepeatOptions() {
-      repeatPopup.classList.remove('hidden');
-      installmentPrompt.classList.add('hidden');
-      repeatOptions.classList.add('hidden');
-    }
+    tabs.expense.onclick = () => setTab('expense');
+    tabs.income.onclick = () => setTab('income');
+    tabs.transfer.onclick = () => setTab('transfer');
+    setTab('expense');
 
-    function showInstallmentPrompt() {
-      installmentPrompt.classList.remove('hidden');
-      repeatOptions.classList.add('hidden');
-    }
+    // Suggestion logic
+    const personInput = document.getElementById('person');
+    const suggestionBox = document.getElementById('suggestions');
+    const existingPeople = ['Amazon', 'Netflix', 'Starbucks', 'Noon'];
 
-    function showRepeatChoices() {
-      installmentPrompt.classList.add('hidden');
-      repeatOptions.classList.remove('hidden');
-    }
+    personInput.addEventListener('input', () => {
+      const value = personInput.value.toLowerCase();
+      suggestionBox.innerHTML = '';
+      if (!value) return suggestionBox.classList.add('hidden');
+      const matches = existingPeople.filter(name => name.toLowerCase().includes(value));
+      if (matches.length) {
+        suggestionBox.classList.remove('hidden');
+        matches.forEach(name => {
+          const item = document.createElement('div');
+          item.textContent = name;
+          item.className = 'suggestion-item';
+          item.onclick = () => {
+            personInput.value = name;
+            suggestionBox.classList.add('hidden');
+          };
+          suggestionBox.appendChild(item);
+        });
+      } else {
+        suggestionBox.classList.add('hidden');
+      }
+    });
 
-    function closeRepeatPopup() {
-      repeatPopup.classList.add('hidden');
-      installmentPrompt.classList.add('hidden');
-      repeatOptions.classList.add('hidden');
-    }
+    // Repeat logic
+    const repeatContainer = document.getElementById('repeatContainer');
 
-    function saveInstallments() {
-      const count = document.getElementById('installments').value;
-      if (count) {
-        repeatSummary.textContent = `Repeat: ${count} installments`;
-        repeatSummary.classList.remove('hidden');
-        closeRepeatPopup();
+    const showRepeatInitial = () => {
+      repeatContainer.innerHTML = ` 
+        <button id="repeatBtn" type="button" class="text-[#ff4444] underline">Repeat</button>
+      `;
+      document.getElementById('repeatBtn').onclick = () => {
+        repeatContainer.innerHTML = `
+          <div class="space-y-2">
+            <button id="installmentBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Installment</button>
+            <button id="repeatRealBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Repeat</button>
+            <button id="cancelRepeat" type="button" class="block w-full bg-gray-600 p-2 rounded">Cancel</button>
+          </div>
+        `;
+
+        document.getElementById('installmentBtn').onclick = () => {
+          repeatContainer.innerHTML = `
+            <label class="block mb-1 mt-2">Monthly Installments</label>
+            <input id="installmentCount" type="number" class="w-full p-2 rounded" placeholder="e.g., 3" />
+            <div class="flex gap-2 mt-2">
+              <button type="button" class="bg-[#ff4444] text-white py-1 px-4 rounded" onclick="saveInstallment()">Save</button>
+              <button type="button" class="bg-gray-600 py-1 px-4 rounded" onclick="showRepeatInitial()">Cancel</button>
+            </div>
+          `;
+        };
+
+        document.getElementById('repeatRealBtn').onclick = () => {
+          repeatContainer.innerHTML = `
+            <label class="block mb-1 mt-2">Repeat</label>
+            <select id="repeatType" class="w-full p-2 rounded">
+              <option>Every Day</option>
+              <option>Weekdays</option>
+              <option>Weekends</option>
+              <option>Every Week</option>
+            </select>
+            <div class="flex gap-2 mt-2">
+              <button type="button" class="bg-[#ff4444] text-white py-1 px-4 rounded" onclick="saveRepeat()">Save</button>
+              <button type="button" class="bg-gray-600 py-1 px-4 rounded" onclick="showRepeatInitial()">Cancel</button>
+            </div>
+          `;
+        };
+
+        document.getElementById('cancelRepeat').onclick = showRepeatInitial;
+      };
+    };
+
+    function saveInstallment() {
+      const count = document.getElementById('installmentCount').value;
+      if (count && count > 0) {
+        repeatContainer.innerHTML = `
+          <div class="text-sm text-gray-300">Repeat: ${count} installments 
+            <button type="button" class="text-[#ff4444] underline ml-2" onclick="showRepeatInitial()">Change</button>
+          </div>
+        `;
       }
     }
 
     function saveRepeat() {
-      const freq = document.getElementById('repeatFreq').value;
-      repeatSummary.textContent = `Repeat: ${freq}`;
-      repeatSummary.classList.remove('hidden');
-      closeRepeatPopup();
+      const repeatValue = document.getElementById('repeatType').value;
+      repeatContainer.innerHTML = `
+        <div class="text-sm text-gray-300">Repeat: ${repeatValue}
+          <button type="button" class="text-[#ff4444] underline ml-2" onclick="showRepeatInitial()">Change</button>
+        </div>
+      `;
     }
 
-    function showSuggestions(input) {
-      const val = input.value.toLowerCase();
-      const box = document.getElementById('suggestions');
-      const terms = ['Amazon', 'Noon', 'Lulu', 'Carrefour', 'Talabat'];
-      const matches = terms.filter(t => t.toLowerCase().includes(val));
-      if (!val || matches.length === 0) {
-        box.classList.add('hidden');
-        return;
-      }
-      box.innerHTML = matches.map(m => `<div onclick="selectSuggestion('${m}')">${m}</div>`).join('');
-      box.classList.remove('hidden');
+    function resetRepeat() {
+      showRepeatInitial();
     }
 
-    function selectSuggestion(value) {
-      document.getElementById('payeeInput').value = value;
-      document.getElementById('suggestions').classList.add('hidden');
-    }
+    // Init repeat
+    showRepeatInitial();
 
-    function validateForm() {
-      const inputs = formContent.querySelectorAll('input[required], select[required]');
-      for (let input of inputs) {
-        if (!input.value.trim()) {
-          alert("Please fill all required fields.");
-          return false;
-        }
-      }
-      return true;
-    }
-
-    setTab('expense'); // Default tab
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Saved!');
+    });
   </script>
 </body>
 </html>
