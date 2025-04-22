@@ -3,48 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Accounts v17.20</title>
+  <title>Accounts</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
       background-color: #222;
       color: #f1f1f1;
     }
+
+    .account-card {
+      background-color: #1c1c1c;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+    }
+
+    .account-entry {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 1rem;
+      border-radius: 0.75rem;
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .bubble {
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      font-weight: bold;
+      color: #fff;
+    }
   </style>
 </head>
-<body class="min-h-screen p-4 flex flex-col items-center">
-  <!-- Header -->
-  <div class="w-full max-w-4xl flex justify-between items-center mb-6">
-    <h1 class="text-2xl font-bold">Accounts</h1>
-    <a href="add-account.html" class="bg-[#ff4444] text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all text-lg">+</a>
-  </div>
+<body class="min-h-screen p-6 flex items-center justify-center">
 
-  <!-- Grouped Accounts -->
-  <div class="w-full max-w-4xl space-y-8">
-    <!-- Example: Bank Accounts -->
-    <div>
-      <h2 class="text-xl font-semibold mb-2">Bank Accounts</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Example Account Card -->
-        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow flex justify-between items-center">
-          <span class="text-lg font-semibold text-blue-400">Mashreq Neo</span>
-          <span class="text-md text-blue-400 font-mono">AED 435.50</span>
-        </div>
+  <div class="w-full max-w-2xl relative">
+    
+    <!-- + Button -->
+    <a href="add-account.html" class="absolute top-0 right-0 bg-[#ff4444] text-white px-4 py-2 rounded-full text-lg font-bold shadow hover:bg-red-600 transition-all">
+      +
+    </a>
+
+    <!-- Accounts Container -->
+    <div class="account-card">
+      <h2 class="text-2xl font-bold mb-4">My Accounts</h2>
+
+      <!-- Example Accounts - You can dynamically generate this with JS or fetch from Google Sheets later -->
+      <div class="account-entry" style="background-color: #60a5fa;">
+        <span>Mashreq Neo</span>
+        <span class="bubble" style="background-color: #60a5fa;">AED 435.50</span>
       </div>
-    </div>
 
-    <!-- Credit Cards -->
-    <div>
-      <h2 class="text-xl font-semibold mb-2">Credit Cards</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow flex justify-between items-center">
-          <span class="text-lg font-semibold text-red-400">Emirates NBD</span>
-          <span class="text-md text-red-400 font-mono">AED (2,352.75)</span>
-        </div>
+      <div class="account-entry" style="background-color: #f87171;">
+        <span>Emirates NBD</span>
+        <span class="bubble" style="background-color: #f87171;">AED (2,352.75)</span>
       </div>
-    </div>
 
-    <!-- Additional types like Loans, Investments... -->
+      <div class="account-entry" style="background-color: #4ade80;">
+        <span>Cash Wallet</span>
+        <span class="bubble" style="background-color: #4ade80;">AED 1,050.00</span>
+      </div>
+
+      <div class="account-entry" style="background-color: #facc15;">
+        <span>HSBC Credit</span>
+        <span class="bubble" style="background-color: #facc15;">AED (7,800.00)</span>
+      </div>
+
+    </div>
   </div>
 </body>
 </html>
