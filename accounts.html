@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Accounts v17.11</title>
+  <title>Accounts v17.20</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -12,24 +12,23 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col p-4">
+<body class="min-h-screen p-4 flex flex-col items-center">
   <!-- Header -->
-  <div class="flex justify-between items-center mb-6">
+  <div class="w-full max-w-4xl flex justify-between items-center mb-6">
     <h1 class="text-2xl font-bold">Accounts</h1>
     <a href="add-account.html" class="bg-[#ff4444] text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all text-lg">+</a>
   </div>
 
-  <!-- Grouped Accounts Section -->
-  <div class="space-y-8">
+  <!-- Grouped Accounts -->
+  <div class="w-full max-w-4xl space-y-8">
     <!-- Example: Bank Accounts -->
     <div>
       <h2 class="text-xl font-semibold mb-2">Bank Accounts</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Placeholder: These will be loaded dynamically later -->
-        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow">
-          <div class="font-semibold text-lg">Mashreq Neo</div>
-          <div class="text-sm text-gray-400">AED - Savings</div>
-          <div class="text-xs mt-2 text-gray-500">No description yet</div>
+        <!-- Example Account Card -->
+        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow flex justify-between items-center">
+          <span class="text-lg font-semibold text-blue-400">Mashreq Neo</span>
+          <span class="text-md text-blue-400 font-mono">AED 435.50</span>
         </div>
       </div>
     </div>
@@ -38,15 +37,14 @@
     <div>
       <h2 class="text-xl font-semibold mb-2">Credit Cards</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow">
-          <div class="font-semibold text-lg">Emirates NBD Visa</div>
-          <div class="text-sm text-gray-400">AED - Credit Card</div>
-          <div class="text-xs mt-2 text-gray-500">Settle on 10th, Pay by 1st</div>
+        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow flex justify-between items-center">
+          <span class="text-lg font-semibold text-red-400">Emirates NBD</span>
+          <span class="text-md text-red-400 font-mono">AED (2,352.75)</span>
         </div>
       </div>
     </div>
 
-    <!-- Add others like Loans, Investments, etc., here as they are created -->
+    <!-- Additional types like Loans, Investments... -->
   </div>
 </body>
 </html>
