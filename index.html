@@ -7,10 +7,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100 text-gray-800">
-  <div class="max-w-xl mx-auto bg-white shadow-lg rounded-2xl p-6 my-10">
+  <div class="w-full max-w-xl mx-auto bg-white shadow-lg rounded-2xl p-6 my-10">
     <h1 class="text-2xl font-bold mb-6 text-center">💰 Money Manager</h1>
 
-  <div id="summary" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+    <!-- Summary Section -->
+    <div id="summary" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+      <!-- Summary cards will be inserted here -->
+    </div>
+
+    <!-- Form Section -->
     <form id="transaction-form" class="space-y-4">
       <input type="date" name="Date" required class="w-full border px-4 py-2 rounded" />
       <select name="Type" class="w-full border px-4 py-2 rounded">
@@ -35,9 +40,12 @@
         <option>FALSE</option>
         <option>TRUE</option>
       </select>
-      <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700">Add Transaction</button>
+      <button type="submit" class="w-full bg-blue-600 text-white font-semibold py-2 rounded hover:bg-blue-700">
+        Add Transaction
+      </button>
     </form>
-   </div>
+
+    <!-- Transactions List -->
     <h2 class="text-xl font-semibold mt-8 mb-2">📄 Transactions</h2>
     <ul id="transaction-list" class="space-y-2 text-sm"></ul>
   </div>
