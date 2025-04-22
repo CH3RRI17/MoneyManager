@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Record</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #222;
+      color: #f1f1f1;
+    }
+    .tab-active {
+      border-bottom-width: 3px;
+    }
+  </style>
+</head>
+<body class="min-h-screen p-4 flex flex-col items-center justify-start">
+
+  <div class="w-full max-w-2xl space-y-4">
+    <!-- Tab Navigation -->
+    <div class="flex justify-between text-center text-sm font-medium">
+      <button id="tab-expense" class="w-1/3 pb-2 tab-active border-[#ff4444]">Expense</button>
+      <button id="tab-income" class="w-1/3 pb-2 border-transparent hover:text-green-400">Income</button>
+      <button id="tab-transfer" class="w-1/3 pb-2 border-transparent hover:text-blue-400">Transfer</button>
+    </div>
+
+    <!-- Expense Form -->
+    <form id="form-expense" class="bg-[#1c1c1c] rounded-xl p-4 space-y-4">
+      <h2 class="text-xl font-bold text-[#ff4444]">Add Expense</h2>
+
+      <!-- Date -->
+      <div>
+        <label class="block mb-1">Date</label>
+        <input type="date" class="w-full bg-[#333] text-white rounded px-3 py-2"/>
+        <button type="button" onclick="openRepeatOptions()" class="text-xs text-blue-400 mt-1 underline">Repeat Options</button>
+      </div>
+
+      <!-- Account -->
+      <div>
+        <label class="block mb-1">Account</label>
+        <select class="w-full bg-[#333] text-white rounded px-3 py-2">
+          <option>Mashreq Neo (AED)</option>
+          <option>Cash Wallet (AED)</option>
+        </select>
+      </div>
+
+      <!-- Amount -->
+      <div>
+        <label class="block mb-1">Amount</label>
+        <input type="number" class="w-full bg-[#333] text-white rounded px-3 py-2"/>
+      </div>
+
+      <!-- Category -->
+      <div>
+        <label class="block mb-1">Category</label>
+        <input type="text" class="w-full bg-[#333] text-white rounded px-3 py-2"/>
+      </div>
+
+      <!-- Paid To -->
+      <div>
+        <label class="block mb-1">Paid to</label>
+        <input type="text" list="suggestions" class="w-full bg-[#333] text-white rounded px-3 py-2"/>
+        <datalist id="suggestions">
+          <option>Amazon</option>
+          <option>Uber</option>
+          <option>Carrefour</option>
+        </datalist>
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block mb-1">Description</label>
+        <textarea class="w-full bg-[#333] text-white rounded px-3 py-2"></textarea>
+      </div>
+
+      <button type="submit" class="w-full bg-[#ff4444] text-white rounded px-4 py-2 font-semibold">Save</button>
+    </form>
+
+    <!-- Income Form -->
+    <form id="form-income" class="hidden bg-[#1c1c1c] rounded-xl p-4 space-y-4">
+      <h2 class="text-xl font-bold text-[#22c55e]">Add Income</h2>
+      <!-- Same fields, but "Received from" instead of "Paid to" -->
+      <!-- Duplicate structure from Expense Form with changes -->
+    </form>
+
+    <!-- Transfer Form -->
+    <form id="form-transfer" class="hidden bg-[#1c1c1c] rounded-xl p-4 space-y-4">
+      <h2 class="text-xl font-bold text-[#3b82f6]">Add Transfer</h2>
+
+      <!-- Date -->
+      <div>
+        <label class="block mb-1">Date</label>
+        <input type="date" class="w-full bg-[#333] text-white rounded px-3 py-2"/>
+        <button type="button" onclick="openRepeatOptions()" class="text-xs text-blue-400 mt-1 underline">Repeat Options</button>
+      </div>
+
+      <div>
+        <label class="block mb-1">Amount</label>
+        <input type="number" class="w-full bg-[#333] text-white rounded px-3 py-2"/>
+      </div>
+
+      <div>
+        <label class="block mb-1">From</label>
+        <select class="w-full bg-[#333] text-white rounded px-3 py-2">
+          <option>Cash Wallet</option>
+          <option>Mashreq Neo</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block mb-1">To</label>
+        <select class="w-full bg-[#333] text-white rounded px-3 py-2">
+          <option>Emirates NBD</option>
+          <option>HSBC Credit</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block mb-1">Note</label>
+        <input type="text" class="w-full bg-[#333] text-white rounded px-3 py-2"/>
+      </div>
+
+      <div>
+        <label class="block mb-1">Description</label>
+        <textarea class="w-full bg-[#333] text-white rounded px-3 py-2"></textarea>
+      </div>
+
+      <button type="submit" class="w-full bg-[#3b82f6] text-white rounded px-4 py-2 font-semibold">Save</button>
+    </form>
+  </div>
+
+  <!-- Repeat Option Modal -->
+  <div id="repeat-options" class="hidden fixed inset-0 bg-black/70 flex items-end justify-center z-50">
+    <div class="bg-[#1c1c1c] w-full max-w-md p-4 rounded-t-2xl">
+      <div class="text-center mb-2 text-white font-bold">Repeat Options</div>
+      <button class="w-full py-2 hover:bg-[#333] rounded">Installment Plan</button>
+      <button class="w-full py-2 hover:bg-[#333] rounded">Repeat Every Day</button>
+      <button class="w-full py-2 hover:bg-[#333] rounded">Repeat Weekdays</button>
+      <button class="w-full py-2 hover:bg-[#333] rounded">Repeat Weekends</button>
+      <button class="w-full py-2 hover:bg-[#333] rounded">Repeat Every Week</button>
+      <button onclick="closeRepeatOptions()" class="w-full text-red-400 mt-2">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    const tabs = {
+      'tab-expense': 'form-expense',
+      'tab-income': 'form-income',
+      'tab-transfer': 'form-transfer'
+    };
+
+    Object.keys(tabs).forEach(tabId => {
+      document.getElementById(tabId).addEventListener('click', () => {
+        Object.keys(tabs).forEach(t => {
+          document.getElementById(t).classList.remove('tab-active');
+          document.getElementById(tabs[t]).classList.add('hidden');
+        });
+        document.getElementById(tabId).classList.add('tab-active');
+        document.getElementById(tabs[tabId]).classList.remove('hidden');
+      });
+    });
+
+    function openRepeatOptions() {
+      document.getElementById('repeat-options').classList.remove('hidden');
+    }
+
+    function closeRepeatOptions() {
+      document.getElementById('repeat-options').classList.add('hidden');
+    }
+  </script>
+</body>
+</html>
