@@ -12,9 +12,9 @@
 
     <!-- Tabs -->
     <div class="flex justify-between border-b border-gray-600">
-      <button onclick="setTab('expense')" id="expense-tab" class="flex-1 text-center py-2 border-b-2 border-[#ff4444] text-[#ff4444] font-semibold">Expense</button>
-      <button onclick="setTab('income')" id="income-tab" class="flex-1 text-center py-2 border-b-2 border-transparent text-white">Income</button>
-      <button onclick="setTab('transfer')" id="transfer-tab" class="flex-1 text-center py-2 border-b-2 border-transparent text-white">Transfer</button>
+      <button onclick="setTab('expense')" id="expense-tab" class="flex-1 text-center py-2 font-semibold">Expense</button>
+      <button onclick="setTab('income')" id="income-tab" class="flex-1 text-center py-2 font-semibold">Income</button>
+      <button onclick="setTab('transfer')" id="transfer-tab" class="flex-1 text-center py-2 font-semibold">Transfer</button>
     </div>
 
     <!-- Forms -->
@@ -29,6 +29,7 @@
       <div>
         <label>Account</label>
         <select class="w-full bg-[#333] p-2 rounded">
+          <option>Select Account</option>
           <option>Mashreq</option>
           <option>ENBD</option>
           <option>Cash Wallet</option>
@@ -47,8 +48,8 @@
 
       <div>
         <label>Paid to</label>
-        <input id="paid-to" type="text" class="w-full bg-[#333] p-2 rounded" oninput="showSuggestions(this.value, 'paid-to')" autocomplete="off" />
-        <div id="paid-to-suggestions" class="text-sm text-gray-400"></div>
+        <input id="paid-to" type="text" class="w-full bg-[#333] p-2 rounded" autocomplete="off" />
+        <div id="paid-to-suggestions" class="text-sm text-gray-400 mt-1"></div>
       </div>
 
       <div>
@@ -73,6 +74,7 @@
       <div>
         <label>Account</label>
         <select class="w-full bg-[#333] p-2 rounded">
+          <option>Select Account</option>
           <option>Mashreq</option>
           <option>ENBD</option>
           <option>Cash Wallet</option>
@@ -91,8 +93,8 @@
 
       <div>
         <label>Received from</label>
-        <input id="received-from" type="text" class="w-full bg-[#333] p-2 rounded" oninput="showSuggestions(this.value, 'received-from')" autocomplete="off" />
-        <div id="received-from-suggestions" class="text-sm text-gray-400"></div>
+        <input id="received-from" type="text" class="w-full bg-[#333] p-2 rounded" autocomplete="off" />
+        <div id="received-from-suggestions" class="text-sm text-gray-400 mt-1"></div>
       </div>
 
       <div>
@@ -122,6 +124,7 @@
       <div>
         <label>From</label>
         <select class="w-full bg-[#333] p-2 rounded">
+          <option>Select Account</option>
           <option>Mashreq</option>
           <option>ENBD</option>
           <option>Cash Wallet</option>
@@ -131,6 +134,7 @@
       <div>
         <label>To</label>
         <select class="w-full bg-[#333] p-2 rounded">
+          <option>Select Account</option>
           <option>Mashreq</option>
           <option>ENBD</option>
           <option>Cash Wallet</option>
@@ -158,7 +162,7 @@
       <div class="space-y-2">
         <button onclick="showInstallment()" class="w-full bg-[#444] p-2 rounded">Installment</button>
         <button onclick="showRepeatSelect()" class="w-full bg-[#444] p-2 rounded">Repeat</button>
-        <button onclick="hideRepeatOptions()" class="w-full text-gray-400 mt-2">Cancel</button>
+        <button onclick="hideAllRepeat()" class="w-full text-gray-400 mt-2">Cancel</button>
       </div>
     </div>
 
@@ -192,12 +196,17 @@
       document.getElementById("income-form").classList.toggle("hidden", tab !== 'income');
       document.getElementById("transfer-form").classList.toggle("hidden", tab !== 'transfer');
 
-      document.getElementById("expense-tab").classList.toggle("border-[#ff4444]", tab === 'expense');
-      document.getElementById("expense-tab").classList.toggle("text-[#ff4444]", tab === 'expense');
-      document.getElementById("income-tab").classList.toggle("border-[#22cc88]", tab === 'income');
-      document.getElementById("income-tab").classList.toggle("text-[#22cc88]", tab === 'income');
-      document.getElementById("transfer-tab").classList.toggle("border-blue-500", tab === 'transfer');
-      document.getElementById("transfer-tab").classList.toggle("text-blue-400", tab === 'transfer');
+      document.getElementById("expense-tab").classList.remove("border-b-2", "border-[#ff4444]", "text-[#ff4444]");
+      document.getElementById("income-tab").classList.remove("border-b-2", "border-[#22cc88]", "text-[#22cc88]");
+      document.getElementById("transfer-tab").classList.remove("border-b-2", "border-blue-500", "text-blue-400");
+
+      if (tab === 'expense') {
+        document.getElementById("expense-tab").classList.add("border-b-2", "border-[#ff4444]", "text-[#ff4444]");
+      } else if (tab === 'income') {
+        document.getElementById("income-tab").classList.add("border-b-2", "border-[#22cc88]", "text-[#22cc88]");
+      } else {
+        document.getElementById("transfer-tab").classList.add("border-b-2", "border-blue-500", "text-blue-400");
+      }
     }
 
     function showRepeatOptions() {
@@ -214,21 +223,24 @@
       document.getElementById("repeat-select").classList.remove("hidden");
     }
 
-    function hideRepeatOptions() {
-      document.getElementById("repeat-options").classList.add("hidden");
-    }
-
     function hideAllRepeat() {
       document.getElementById("repeat-options").classList.add("hidden");
       document.getElementById("installment-input").classList.add("hidden");
       document.getElementById("repeat-select").classList.add("hidden");
     }
 
-    function showSuggestions(input, id) {
-      const filtered = suggestions.filter(s => s.toLowerCase().startsWith(input.toLowerCase()));
-      const container = document.getElementById(`${id}-suggestions`);
-      container.innerHTML = filtered.map(f => `<div>${f}</div>`).join('');
+    function addLiveSuggestions(inputId, suggestionId) {
+      const input = document.getElementById(inputId);
+      const container = document.getElementById(suggestionId);
+      input.addEventListener('input', () => {
+        const value = input.value.toLowerCase();
+        const filtered = suggestions.filter(s => s.toLowerCase().includes(value));
+        container.innerHTML = filtered.map(f => `<div class="cursor-pointer hover:text-white" onclick="document.getElementById('${inputId}').value='${f}';document.getElementById('${suggestionId}').innerHTML=''">${f}</div>`).join('');
+      });
     }
+
+    addLiveSuggestions('paid-to', 'paid-to-suggestions');
+    addLiveSuggestions('received-from', 'received-from-suggestions');
 
     setTab('expense');
   </script>
