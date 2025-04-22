@@ -301,9 +301,21 @@
         return;
       }
 
-      alert('Saved!');
+      // Additional validation for Transfer
+      if (tabs.transfer.classList.contains("tab-active")) {
+        const fromAccount = document.getElementById("from").value;
+        const toAccount = document.getElementById("to").value;
 
-      // Reset form fields after saving
+        if (!fromAccount || !toAccount || fromAccount === toAccount) {
+          alert("Please select valid 'From' and 'To' accounts.");
+          return;
+        }
+      }
+
+      // Save process (for Transfer too)
+      alert('Transaction Saved!');
+      
+      // Reset fields after saving
       form.reset();
       showRepeatInitial(); // Reset repeat section
       setTab('expense'); // Reset to Expense tab
