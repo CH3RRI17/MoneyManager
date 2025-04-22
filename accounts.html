@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Accounts</title>
   <script src="https://cdn.tailwindcss.com"></script>
@@ -24,15 +24,23 @@
       align-items: center;
       padding: 0.75rem 1rem;
       border-radius: 0.75rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       font-weight: 500;
     }
 
     .bubble {
-      padding: 0.5rem 1rem;
+      padding: 0.4rem 1rem;
       border-radius: 9999px;
       font-weight: bold;
       color: #fff;
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: bold;
+      margin: 2rem 0 1rem;
+      border-bottom: 1px solid #444;
+      padding-bottom: 0.5rem;
     }
   </style>
 </head>
@@ -49,25 +57,53 @@
     <div class="account-card">
       <h2 class="text-2xl font-bold mb-4">My Accounts</h2>
 
-      <!-- Example Accounts - You can dynamically generate this with JS or fetch from Google Sheets later -->
-      <div class="account-entry" style="background-color: #60a5fa;">
-        <span>Mashreq Neo</span>
-        <span class="bubble" style="background-color: #60a5fa;">AED 435.50</span>
+      <!-- Bank -->
+      <div>
+        <div class="section-title">Bank Accounts</div>
+        <div class="account-entry" style="background-color: #60a5fa;">
+          <span>Mashreq Neo</span>
+          <span class="bubble" style="background-color: #60a5fa;">AED 435.50</span>
+        </div>
+        <div class="account-entry" style="background-color: #f87171;">
+          <span>Emirates NBD</span>
+          <span class="bubble" style="background-color: #f87171;">AED (2,352.75)</span>
+        </div>
       </div>
 
-      <div class="account-entry" style="background-color: #f87171;">
-        <span>Emirates NBD</span>
-        <span class="bubble" style="background-color: #f87171;">AED (2,352.75)</span>
+      <!-- Credit Cards -->
+      <div>
+        <div class="section-title">Credit Cards</div>
+        <div class="account-entry" style="background-color: #facc15;">
+          <span>HSBC Credit</span>
+          <span class="bubble" style="background-color: #facc15;">AED (7,800.00)</span>
+        </div>
       </div>
 
-      <div class="account-entry" style="background-color: #4ade80;">
-        <span>Cash Wallet</span>
-        <span class="bubble" style="background-color: #4ade80;">AED 1,050.00</span>
+      <!-- Cash -->
+      <div>
+        <div class="section-title">Cash</div>
+        <div class="account-entry" style="background-color: #4ade80;">
+          <span>Cash Wallet</span>
+          <span class="bubble" style="background-color: #4ade80;">AED 1,050.00</span>
+        </div>
       </div>
 
-      <div class="account-entry" style="background-color: #facc15;">
-        <span>HSBC Credit</span>
-        <span class="bubble" style="background-color: #facc15;">AED (7,800.00)</span>
+      <!-- Loans -->
+      <div>
+        <div class="section-title">Loans</div>
+        <div class="account-entry" style="background-color: #fb923c;">
+          <span>Auto Loan</span>
+          <span class="bubble" style="background-color: #fb923c;">AED (25,000.00)</span>
+        </div>
+      </div>
+
+      <!-- Investments -->
+      <div>
+        <div class="section-title">Investments</div>
+        <div class="account-entry" style="background-color: #a78bfa;">
+          <span>eToro Account</span>
+          <span class="bubble" style="background-color: #a78bfa;">AED 15,400.00</span>
+        </div>
       </div>
 
     </div>
