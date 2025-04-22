@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Money Manager</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Money Manager</h1>
+
+    <form id="transaction-form">
+      <input type="date" name="Date" required />
+      <select name="Type">
+        <option>Income</option>
+        <option>Expense</option>
+        <option>Transfer</option>
+      </select>
+      <input name="Amount" placeholder="Amount" type="number" required />
+      <select name="Currency">
+        <option>AED</option>
+        <option>INR</option>
+      </select>
+      <input name="Category" placeholder="Category" />
+      <input name="Description" placeholder="Description" />
+      <input name="From Account" placeholder="From Account" />
+      <input name="To Account" placeholder="To Account" />
+      <select name="Is Loan?">
+        <option>FALSE</option>
+        <option>TRUE</option>
+      </select>
+      <select name="Is Expected?">
+        <option>FALSE</option>
+        <option>TRUE</option>
+      </select>
+      <button type="submit">Add Transaction</button>
+    </form>
+
+    <h2>📄 Transactions</h2>
+    <ul id="transaction-list"></ul>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
