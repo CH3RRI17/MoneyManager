@@ -53,11 +53,13 @@ function renderSummary(data) {
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
   const data = Object.fromEntries(new FormData(form));
+
   await fetch(`${API_BASE}?action=addTransaction`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: { 'Content-Type': 'application/json' }
   });
+
   form.reset();
   fetchTransactions();
 });
