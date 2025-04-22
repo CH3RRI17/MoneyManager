@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Record Transaction v23.07</title>
+  <title>Record Transaction v23.16</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -56,10 +56,8 @@
         <input type="date" id="date" name="date" class="w-full p-2 rounded" required />
       </div>
 
-      <!-- Repeat Logic -->
-      <div id="repeatContainer">
-        <button id="repeatBtn" type="button" class="text-[#ff4444] underline">Repeat</button>
-      </div>
+      <!-- Repeat Display / Button / Config -->
+      <div id="repeatContainer"></div>
 
       <!-- Account -->
       <div id="accountField">
@@ -91,13 +89,7 @@
         <div id="suggestions" class="suggestion-box absolute w-full hidden rounded mt-1"></div>
       </div>
 
-      <!-- Description -->
-      <div>
-        <label for="description" class="block mb-1">Description</label>
-        <textarea id="description" rows="2" class="w-full p-2 rounded"></textarea>
-      </div>
-
-      <!-- From / To for Transfer only -->
+      <!-- Transfer fields -->
       <div id="transferFields" class="hidden space-y-4">
         <div>
           <label for="from" class="block mb-1">From</label>
@@ -119,10 +111,16 @@
         </div>
       </div>
 
+      <!-- Description (moved in Transfer) -->
+      <div id="descriptionField">
+        <label for="description" class="block mb-1">Description</label>
+        <textarea id="description" rows="2" class="w-full p-2 rounded"></textarea>
+      </div>
+
       <!-- Buttons -->
       <div class="flex gap-4 pt-4">
         <button type="submit" class="bg-[#ff4444] text-white py-2 px-4 rounded">Save</button>
-        <button type="reset" class="bg-gray-600 text-white py-2 px-4 rounded">Reset</button>
+        <button type="reset" class="bg-gray-600 text-white py-2 px-4 rounded" onclick="resetRepeat()">Reset</button>
       </div>
     </form>
   </div>
@@ -141,6 +139,7 @@
     const personField = document.getElementById('personField');
     const personLabel = document.getElementById('personLabel');
     const transferFields = document.getElementById('transferFields');
+    const descriptionField = document.getElementById('descriptionField');
 
     const setTab = (type) => {
       Object.keys(tabs).forEach(key => tabs[key].classList.remove("tab-active"));
@@ -151,6 +150,15 @@
       categoryField.classList.toggle("hidden", isTransfer);
       personField.classList.toggle("hidden", isTransfer);
       transferFields.classList.toggle("hidden", !isTransfer);
+
+      // Move description after To in transfer
+      const parent = document.getElementById('recordForm');
+      if (isTransfer) {
+        transferFields.insertAdjacentElement('afterend', descriptionField);
+      } else {
+        form.insertBefore(descriptionField, form.lastElementChild);
+      }
+
       personLabel.innerText = type === 'income' ? 'Received from' : 'Paid to';
     };
 
@@ -159,46 +167,7 @@
     tabs.transfer.onclick = () => setTab('transfer');
     setTab('expense');
 
-    // Repeat logic
-    const repeatContainer = document.getElementById('repeatContainer');
-    const createRepeatOptions = () => {
-      repeatContainer.innerHTML = `
-        <div class="space-y-2">
-          <button id="installmentBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Installment</button>
-          <button id="repeatRealBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Repeat</button>
-          <button type="button" id="cancelRepeat" class="block w-full bg-gray-600 p-2 rounded">Cancel</button>
-        </div>
-      `;
-      document.getElementById('installmentBtn').onclick = () => {
-        repeatContainer.innerHTML = `
-          <label class="block mb-1 mt-2">Monthly Installments</label>
-          <input type="number" class="w-full p-2 rounded" placeholder="e.g., 3" />
-          <div class="flex gap-2 mt-2">
-            <button type="button" class="bg-[#ff4444] text-white py-1 px-4 rounded">Save</button>
-            <button type="button" class="bg-gray-600 py-1 px-4 rounded" onclick="resetRepeat()">Cancel</button>
-          </div>
-        `;
-      };
-      document.getElementById('repeatRealBtn').onclick = () => {
-        repeatContainer.innerHTML = `
-          <label class="block mb-1 mt-2">Repeat</label>
-          <select class="w-full p-2 rounded" onchange="resetRepeat()">
-            <option>Every Day</option>
-            <option>Weekdays</option>
-            <option>Weekends</option>
-            <option>Every Week</option>
-          </select>
-        `;
-      };
-      document.getElementById('cancelRepeat').onclick = resetRepeat;
-    };
-    const resetRepeat = () => {
-      repeatContainer.innerHTML = `<button id="repeatBtn" type="button" class="text-[#ff4444] underline">Repeat</button>`;
-      document.getElementById('repeatBtn').onclick = createRepeatOptions;
-    };
-    document.getElementById('repeatBtn').onclick = createRepeatOptions;
-
-    // Suggestions for Paid To / Received From
+    // Suggestion logic
     const personInput = document.getElementById('person');
     const suggestionBox = document.getElementById('suggestions');
     const existingPeople = ['Amazon', 'Netflix', 'Starbucks', 'Noon'];
@@ -206,12 +175,9 @@
     personInput.addEventListener('input', () => {
       const value = personInput.value.toLowerCase();
       suggestionBox.innerHTML = '';
-      if (!value) {
-        suggestionBox.classList.add('hidden');
-        return;
-      }
+      if (!value) return suggestionBox.classList.add('hidden');
       const matches = existingPeople.filter(name => name.toLowerCase().includes(value));
-      if (matches.length > 0) {
+      if (matches.length) {
         suggestionBox.classList.remove('hidden');
         matches.forEach(name => {
           const item = document.createElement('div');
@@ -228,9 +194,83 @@
       }
     });
 
+    // Repeat logic
+    const repeatContainer = document.getElementById('repeatContainer');
+
+    const showRepeatInitial = () => {
+      repeatContainer.innerHTML = `
+        <button id="repeatBtn" type="button" class="text-[#ff4444] underline">Repeat</button>
+      `;
+      document.getElementById('repeatBtn').onclick = () => {
+        repeatContainer.innerHTML = `
+          <div class="space-y-2">
+            <button id="installmentBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Installment</button>
+            <button id="repeatRealBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Repeat</button>
+            <button id="cancelRepeat" type="button" class="block w-full bg-gray-600 p-2 rounded">Cancel</button>
+          </div>
+        `;
+
+        document.getElementById('installmentBtn').onclick = () => {
+          repeatContainer.innerHTML = `
+            <label class="block mb-1 mt-2">Monthly Installments</label>
+            <input id="installmentCount" type="number" class="w-full p-2 rounded" placeholder="e.g., 3" />
+            <div class="flex gap-2 mt-2">
+              <button type="button" class="bg-[#ff4444] text-white py-1 px-4 rounded" onclick="saveInstallment()">Save</button>
+              <button type="button" class="bg-gray-600 py-1 px-4 rounded" onclick="showRepeatInitial()">Cancel</button>
+            </div>
+          `;
+        };
+
+        document.getElementById('repeatRealBtn').onclick = () => {
+          repeatContainer.innerHTML = `
+            <label class="block mb-1 mt-2">Repeat</label>
+            <select id="repeatType" class="w-full p-2 rounded">
+              <option>Every Day</option>
+              <option>Weekdays</option>
+              <option>Weekends</option>
+              <option>Every Week</option>
+            </select>
+            <div class="flex gap-2 mt-2">
+              <button type="button" class="bg-[#ff4444] text-white py-1 px-4 rounded" onclick="saveRepeat()">Save</button>
+              <button type="button" class="bg-gray-600 py-1 px-4 rounded" onclick="showRepeatInitial()">Cancel</button>
+            </div>
+          `;
+        };
+
+        document.getElementById('cancelRepeat').onclick = showRepeatInitial;
+      };
+    };
+
+    function saveInstallment() {
+      const count = document.getElementById('installmentCount').value;
+      if (count && count > 0) {
+        repeatContainer.innerHTML = `
+          <div class="text-sm text-gray-300">Repeat: ${count} installments 
+            <button type="button" class="text-[#ff4444] underline ml-2" onclick="showRepeatInitial()">Change</button>
+          </div>
+        `;
+      }
+    }
+
+    function saveRepeat() {
+      const repeatValue = document.getElementById('repeatType').value;
+      repeatContainer.innerHTML = `
+        <div class="text-sm text-gray-300">Repeat: ${repeatValue}
+          <button type="button" class="text-[#ff4444] underline ml-2" onclick="showRepeatInitial()">Change</button>
+        </div>
+      `;
+    }
+
+    function resetRepeat() {
+      showRepeatInitial();
+    }
+
+    // Init repeat
+    showRepeatInitial();
+
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      alert('Saved! (Data handling later)');
+      alert('Saved!');
     });
   </script>
 </body>
