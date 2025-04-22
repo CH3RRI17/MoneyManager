@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Record Transaction</title>
+  <title>Record Transaction v23.07</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -40,7 +40,7 @@
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-  <div class="w-full max-w-xl space-y-6 bg-[#1c1c1c] p-6 rounded-xl shadow-lg">
+  <div class="w-full max-w-xl space-y-6 bg-[#1c1c1c] p-6 rounded-xl shadow-lg relative">
     <!-- Tabs -->
     <div class="flex space-x-4 border-b border-gray-600 mb-4">
       <button id="expenseTab" class="pb-2 text-white tab-active border-[#ff4444]">Expense</button>
@@ -49,43 +49,20 @@
     </div>
 
     <!-- FORM Start -->
-    <form id="recordForm" class="space-y-4">
+    <form id="recordForm" class="space-y-4 relative">
       <!-- Date -->
       <div>
         <label for="date" class="block mb-1">Date</label>
         <input type="date" id="date" name="date" class="w-full p-2 rounded" required />
       </div>
 
-      <!-- Repeat Button -->
-      <div>
+      <!-- Repeat Logic -->
+      <div id="repeatContainer">
         <button id="repeatBtn" type="button" class="text-[#ff4444] underline">Repeat</button>
-        <div id="repeatOptions" class="hidden mt-2 space-y-2">
-          <button id="installmentBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Installment</button>
-          <button id="actualRepeatBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Repeat</button>
-        </div>
-
-        <div id="installmentInput" class="hidden mt-2 space-y-2">
-          <label for="installmentCount">Monthly Installments</label>
-          <input type="number" id="installmentCount" class="w-full p-2 rounded" placeholder="e.g., 3" />
-          <div class="flex gap-2">
-            <button type="button" class="bg-[#ff4444] text-white py-1 px-4 rounded">Save</button>
-            <button type="button" onclick="hideRepeat()" class="bg-gray-600 py-1 px-4 rounded">Cancel</button>
-          </div>
-        </div>
-
-        <div id="repeatInput" class="hidden mt-2 space-y-2">
-          <label>Repeat</label>
-          <select class="w-full p-2 rounded" onchange="hideRepeat()">
-            <option>Every Day</option>
-            <option>Weekdays</option>
-            <option>Weekends</option>
-            <option>Every Week</option>
-          </select>
-        </div>
       </div>
 
       <!-- Account -->
-      <div id="accountField" class="">
+      <div id="accountField">
         <label class="block mb-1">Account</label>
         <select class="w-full p-2 rounded">
           <option disabled selected>Select Account</option>
@@ -101,14 +78,14 @@
         <input type="number" id="amount" class="w-full p-2 rounded" />
       </div>
 
-      <!-- Category -->
-      <div>
+      <!-- Category (hidden for Transfer) -->
+      <div id="categoryField">
         <label for="category" class="block mb-1">Category</label>
         <input type="text" id="category" class="w-full p-2 rounded" />
       </div>
 
-      <!-- Paid to / Received from -->
-      <div>
+      <!-- Paid to / Received from (hidden for Transfer) -->
+      <div id="personField" class="relative">
         <label id="personLabel" for="person" class="block mb-1">Paid to</label>
         <input type="text" id="person" class="w-full p-2 rounded" autocomplete="off" />
         <div id="suggestions" class="suggestion-box absolute w-full hidden rounded mt-1"></div>
@@ -120,7 +97,7 @@
         <textarea id="description" rows="2" class="w-full p-2 rounded"></textarea>
       </div>
 
-      <!-- From / To for Transfer -->
+      <!-- From / To for Transfer only -->
       <div id="transferFields" class="hidden space-y-4">
         <div>
           <label for="from" class="block mb-1">From</label>
@@ -157,47 +134,71 @@
       income: document.getElementById('incomeTab'),
       transfer: document.getElementById('transferTab')
     };
+
+    const form = document.getElementById('recordForm');
     const accountField = document.getElementById('accountField');
+    const categoryField = document.getElementById('categoryField');
+    const personField = document.getElementById('personField');
     const personLabel = document.getElementById('personLabel');
     const transferFields = document.getElementById('transferFields');
-    const form = document.getElementById('recordForm');
 
     const setTab = (type) => {
-      Object.keys(tabs).forEach(key => {
-        tabs[key].classList.remove("tab-active");
-      });
+      Object.keys(tabs).forEach(key => tabs[key].classList.remove("tab-active"));
       tabs[type].classList.add("tab-active");
 
-      accountField.classList.toggle("hidden", type === 'transfer');
-      transferFields.classList.toggle("hidden", type !== 'transfer');
-
+      const isTransfer = type === 'transfer';
+      accountField.classList.toggle("hidden", isTransfer);
+      categoryField.classList.toggle("hidden", isTransfer);
+      personField.classList.toggle("hidden", isTransfer);
+      transferFields.classList.toggle("hidden", !isTransfer);
       personLabel.innerText = type === 'income' ? 'Received from' : 'Paid to';
     };
 
     tabs.expense.onclick = () => setTab('expense');
     tabs.income.onclick = () => setTab('income');
     tabs.transfer.onclick = () => setTab('transfer');
-
-    setTab('expense'); // default
+    setTab('expense');
 
     // Repeat logic
-    document.getElementById('repeatBtn').onclick = () => {
-      document.getElementById('repeatOptions').classList.toggle('hidden');
+    const repeatContainer = document.getElementById('repeatContainer');
+    const createRepeatOptions = () => {
+      repeatContainer.innerHTML = `
+        <div class="space-y-2">
+          <button id="installmentBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Installment</button>
+          <button id="repeatRealBtn" type="button" class="block w-full bg-[#333] p-2 rounded">Repeat</button>
+          <button type="button" id="cancelRepeat" class="block w-full bg-gray-600 p-2 rounded">Cancel</button>
+        </div>
+      `;
+      document.getElementById('installmentBtn').onclick = () => {
+        repeatContainer.innerHTML = `
+          <label class="block mb-1 mt-2">Monthly Installments</label>
+          <input type="number" class="w-full p-2 rounded" placeholder="e.g., 3" />
+          <div class="flex gap-2 mt-2">
+            <button type="button" class="bg-[#ff4444] text-white py-1 px-4 rounded">Save</button>
+            <button type="button" class="bg-gray-600 py-1 px-4 rounded" onclick="resetRepeat()">Cancel</button>
+          </div>
+        `;
+      };
+      document.getElementById('repeatRealBtn').onclick = () => {
+        repeatContainer.innerHTML = `
+          <label class="block mb-1 mt-2">Repeat</label>
+          <select class="w-full p-2 rounded" onchange="resetRepeat()">
+            <option>Every Day</option>
+            <option>Weekdays</option>
+            <option>Weekends</option>
+            <option>Every Week</option>
+          </select>
+        `;
+      };
+      document.getElementById('cancelRepeat').onclick = resetRepeat;
     };
-    document.getElementById('installmentBtn').onclick = () => {
-      document.getElementById('repeatOptions').classList.add('hidden');
-      document.getElementById('installmentInput').classList.remove('hidden');
+    const resetRepeat = () => {
+      repeatContainer.innerHTML = `<button id="repeatBtn" type="button" class="text-[#ff4444] underline">Repeat</button>`;
+      document.getElementById('repeatBtn').onclick = createRepeatOptions;
     };
-    document.getElementById('actualRepeatBtn').onclick = () => {
-      document.getElementById('repeatOptions').classList.add('hidden');
-      document.getElementById('repeatInput').classList.remove('hidden');
-    };
-    const hideRepeat = () => {
-      document.getElementById('installmentInput').classList.add('hidden');
-      document.getElementById('repeatInput').classList.add('hidden');
-    };
+    document.getElementById('repeatBtn').onclick = createRepeatOptions;
 
-    // Real-time suggestion for Paid to / Received from
+    // Suggestions for Paid To / Received From
     const personInput = document.getElementById('person');
     const suggestionBox = document.getElementById('suggestions');
     const existingPeople = ['Amazon', 'Netflix', 'Starbucks', 'Noon'];
@@ -205,7 +206,7 @@
     personInput.addEventListener('input', () => {
       const value = personInput.value.toLowerCase();
       suggestionBox.innerHTML = '';
-      if (value.length === 0) {
+      if (!value) {
         suggestionBox.classList.add('hidden');
         return;
       }
@@ -227,10 +228,9 @@
       }
     });
 
-    // Prevent switching tabs after Save
     form.addEventListener('submit', (e) => {
       e.preventDefault();
-      alert('Saved! (Data handling pending)');
+      alert('Saved! (Data handling later)');
     });
   </script>
 </body>
