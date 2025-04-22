@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Record Transaction v23.34</title>
+  <title>Record Transaction</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -294,7 +294,19 @@
 
     form.addEventListener('submit', (e) => {
       e.preventDefault();
+
+      // Prevent save if category is not selected
+      if (categorySelect.value === "Select Category" || categorySelect.value === "") {
+        alert("Please select a category.");
+        return;
+      }
+
       alert('Saved!');
+
+      // Reset form fields after saving
+      form.reset();
+      showRepeatInitial(); // Reset repeat section
+      setTab('expense'); // Reset to Expense tab
     });
   </script>
 </body>
