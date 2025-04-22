@@ -1,42 +1,52 @@
-<!-- accounts.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Accounts</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background-color: #222;
+      color: #f1f1f1;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 text-gray-800">
-
-  <div class="max-w-4xl mx-auto py-6 px-4">
-    <div class="flex justify-between items-center mb-6">
-      <h1 class="text-2xl font-bold">Accounts</h1>
-      <a href="add-account.html" class="bg-blue-600 text-white px-4 py-2 rounded-full shadow hover:bg-blue-700">+</a>
-    </div>
-
-    <!-- Example Account Sections -->
-    <div class="space-y-6">
-
-      <!-- Cash -->
-      <div>
-        <h2 class="text-lg font-semibold mb-2">Cash</h2>
-        <div class="bg-white shadow rounded-xl p-4">
-          <p class="text-sm text-gray-500 italic">No cash accounts yet.</p>
-        </div>
-      </div>
-
-      <!-- Credit Cards -->
-      <div>
-        <h2 class="text-lg font-semibold mb-2">Credit Cards</h2>
-        <div class="bg-white shadow rounded-xl p-4">
-          <p class="text-sm text-gray-500 italic">No credit cards yet.</p>
-        </div>
-      </div>
-
-      <!-- Savings, Current, etc can follow similarly -->
-    </div>
+<body class="min-h-screen flex flex-col p-4">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h1 class="text-2xl font-bold">Accounts</h1>
+    <a href="add-account.html" class="bg-[#ff4444] text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-all text-lg">+</a>
   </div>
 
+  <!-- Grouped Accounts Section -->
+  <div class="space-y-8">
+    <!-- Example: Bank Accounts -->
+    <div>
+      <h2 class="text-xl font-semibold mb-2">Bank Accounts</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Placeholder: These will be loaded dynamically later -->
+        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow">
+          <div class="font-semibold text-lg">Mashreq Neo</div>
+          <div class="text-sm text-gray-400">AED - Savings</div>
+          <div class="text-xs mt-2 text-gray-500">No description yet</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credit Cards -->
+    <div>
+      <h2 class="text-xl font-semibold mb-2">Credit Cards</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="p-4 bg-[#2a2a2a] rounded-xl shadow">
+          <div class="font-semibold text-lg">Emirates NBD Visa</div>
+          <div class="text-sm text-gray-400">AED - Credit Card</div>
+          <div class="text-xs mt-2 text-gray-500">Settle on 10th, Pay by 1st</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add others like Loans, Investments, etc., here as they are created -->
+  </div>
 </body>
 </html>
