@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Add Account v15.34</title>
+  <title>Add Account</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -20,10 +20,27 @@
     label {
       font-weight: 500;
     }
+
+    .color-option {
+      width: 32px;
+      height: 32px;
+      border-radius: 9999px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border 0.2s;
+    }
+
+    .color-option.selected {
+      border-color: white;
+    }
   </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-  <form class="w-full max-w-xl space-y-6 bg-[#1c1c1c] p-6 rounded-xl shadow-lg">
+  <form class="w-full max-w-xl space-y-6 bg-[#1c1c1c] p-6 rounded-xl shadow-lg relative">
+    
+    <!-- Cancel (X) Button -->
+    <a href="accounts.html" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl font-bold">×</a>
+
     <h2 class="text-2xl font-bold mb-4">Add Account</h2>
 
     <!-- Type -->
@@ -63,14 +80,24 @@
         <option>JPY</option>
         <option>CNY</option>
         <option>CHF</option>
-        <!-- Add more as needed -->
       </select>
     </div>
 
     <!-- Accent Color Picker -->
     <div>
-      <label for="color" class="block mb-1">Accent Color</label>
-      <input type="color" id="color" name="color" value="#00bcd4" class="w-16 h-10 p-1 rounded cursor-pointer" />
+      <label class="block mb-2">Accent Color</label>
+      <div id="colorGrid" class="flex flex-wrap gap-3">
+        <!-- Color Options -->
+        <div class="color-option bg-blue-400" data-color="#60a5fa"></div>
+        <div class="color-option bg-green-400" data-color="#4ade80"></div>
+        <div class="color-option bg-yellow-400" data-color="#facc15"></div>
+        <div class="color-option bg-pink-400" data-color="#f472b6"></div>
+        <div class="color-option bg-purple-400" data-color="#a78bfa"></div>
+        <div class="color-option bg-red-400" data-color="#f87171"></div>
+        <div class="color-option bg-orange-400" data-color="#fb923c"></div>
+        <div class="color-option bg-teal-400" data-color="#2dd4bf"></div>
+      </div>
+      <input type="hidden" id="accentColor" name="accentColor" value="#60a5fa">
     </div>
 
     <!-- Description -->
@@ -103,17 +130,28 @@
     </div>
   </form>
 
+  <!-- Scripts -->
   <script>
     const typeSelect = document.getElementById('type');
     const ccFields = document.getElementById('credit-card-fields');
+    const colorGrid = document.getElementById('colorGrid');
+    const accentInput = document.getElementById('accentColor');
 
     typeSelect.addEventListener('change', () => {
-      if (typeSelect.value === 'Credit Card') {
-        ccFields.classList.remove('hidden');
-      } else {
-        ccFields.classList.add('hidden');
-      }
+      ccFields.classList.toggle('hidden', typeSelect.value !== 'Credit Card');
     });
+
+    colorGrid.querySelectorAll('.color-option').forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove selected state
+        colorGrid.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+        btn.classList.add('selected');
+        accentInput.value = btn.dataset.color;
+      });
+    });
+
+    // Set default selection
+    colorGrid.querySelector('.color-option').classList.add('selected');
   </script>
 </body>
 </html>
