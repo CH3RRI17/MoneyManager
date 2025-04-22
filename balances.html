@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-[#0d0d1c] text-white font-mono">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Balances - Money Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="flex flex-col items-center py-8 px-4 space-y-6">
+
+  <!-- Header -->
+  <div class="text-center space-y-2">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Globe_icon.svg/1024px-Globe_icon.svg.png" alt="Logo" class="w-12 h-12 mx-auto">
+    <h1 class="text-2xl text-indigo-200 font-semibold tracking-wide">Money Flow</h1>
+    <p class="text-lg text-indigo-300">Custom accounts</p>
+  </div>
+
+  <!-- Balances Box -->
+  <div class="w-full max-w-md bg-[#1a1a2e] rounded-3xl p-4 space-y-4">
+    <h2 class="text-xl text-indigo-200">Balances</h2>
+
+    <!-- Toggle -->
+    <div class="flex space-x-2">
+      <button class="bg-indigo-500 text-white px-3 py-1 rounded-lg">Accounts</button>
+      <button class="bg-gray-700 text-white px-3 py-1 rounded-lg">Currencies</button>
+    </div>
+
+    <!-- Account Items -->
+    <div class="space-y-3 text-black">
+      <div class="flex justify-between items-center bg-orange-300 rounded-xl px-4 py-3 font-bold">Cash <span>$10201.53</span></div>
+      <div class="flex justify-between items-center bg-purple-300 rounded-xl px-4 py-3 font-bold">Card <span>$234.53</span></div>
+      <div class="flex justify-between items-center bg-pink-200 rounded-xl px-4 py-3 font-bold">Transport card <span>$15</span></div>
+      <div class="flex justify-between items-center bg-pink-300 rounded-xl px-4 py-3 font-bold">Savings <span>$1605</span></div>
+      <div class="flex justify-between items-center bg-green-300 rounded-xl px-4 py-3 font-bold">Investment <span>$3480.4</span></div>
+      <div class="flex justify-between items-center bg-orange-200 rounded-xl px-4 py-3 font-bold">Binance <span>2.73 BTC</span></div>
+      <div class="flex justify-between items-center bg-yellow-200 rounded-xl px-4 py-3 font-bold">Binance <span>5846.38 USDT</span></div>
+    </div>
+  </div>
+</body>
+</html>
