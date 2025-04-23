@@ -76,7 +76,7 @@
         <input type="number" id="amount" class="w-full p-2 rounded" required />
       </div>
 
-      <!-- Category (dropdown changes by tab, hidden for Transfer) -->
+      <!-- Category -->
       <div id="categoryField">
         <label for="category" class="block mb-1">Category</label>
         <select id="category" class="w-full p-2 rounded" required>
@@ -84,7 +84,7 @@
         </select>
       </div>
 
-      <!-- Paid to / Received from (hidden for Transfer) -->
+      <!-- Paid to / Received from -->
       <div id="personField" class="relative">
         <label id="personLabel" for="person" class="block mb-1">Paid to</label>
         <input type="text" id="person" class="w-full p-2 rounded" autocomplete="off" required />
@@ -113,7 +113,7 @@
         </div>
       </div>
 
-      <!-- Description (moved in Transfer) -->
+      <!-- Description -->
       <div id="descriptionField">
         <label for="description" class="block mb-1">Description</label>
         <textarea id="description" rows="2" class="w-full p-2 rounded"></textarea>
@@ -295,8 +295,9 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      // Prevent save if category is not selected
-      if (categorySelect.value === "Select Category" || categorySelect.value === "") {
+      // Prevent save if category is not selected (only for Expense or Income)
+      if (!tabs.transfer.classList.contains("tab-active") &&
+          (categorySelect.value === "Select Category" || categorySelect.value === "")) {
         alert("Please select a category.");
         return;
       }
@@ -312,13 +313,10 @@
         }
       }
 
-      // Save process (for Transfer too)
       alert('Transaction Saved!');
-      
-      // Reset fields after saving
       form.reset();
-      showRepeatInitial(); // Reset repeat section
-      setTab('expense'); // Reset to Expense tab
+      showRepeatInitial();
+      setTab('expense');
     });
   </script>
 </body>
